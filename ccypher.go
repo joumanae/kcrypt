@@ -2,7 +2,7 @@ package ccypher
 
 import "log"
 
-func ShiftRune(r rune, shift int) rune {
+func ShiftRune(r rune, shift int) (rune, error) {
 
 	shift %= 26
 
@@ -16,6 +16,12 @@ func ShiftRune(r rune, shift int) rune {
 	if r > 'z' {
 		r -= 26
 	}
-
-	return r
+	// uppercase
+	if r >= 'A' && r <= 'Z' {
+		r += rune(shift)
+	}
+	if r > 'Z' {
+		r -= 26
+	}
+	return r, nil
 }
