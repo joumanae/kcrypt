@@ -4,28 +4,24 @@ import (
 	"testing"
 )
 
-// var testCases = []struct {
-// 	r        rune
-// 	shift    int
-// 	expected rune
-// }{
-// 	{'a', 1, 'b'},
-// 	{'z', 1, 'a'},
-// 	{'a', 26, 'a'},
-// 	{'z', 26, 'z'},
-// }
-
 func TestShiftRune(t *testing.T) {
-
-	// Shift takes a rune and an integer, and shifts the given rune by the given integer and returns the result
-
-	// for _, tc := range testCases {
-	// if r != tc.expected {
-	// 	t.Errorf("Expected %v, got %v", tc.expected, tc.r)
-	// }
 	result := ShiftRune('a', 1)
 	expected := 'b'
 	if result != expected {
 		t.Errorf("The expected rune is %v, when the shift is by %v", expected, 1)
+	}
+}
+
+func TestCipherText(t *testing.T) {
+	result := NewCipher(1, "abc").CipherText("abc")
+	if result[0] != "b" || result[1] != "c" || result[2] != "d" {
+		t.Errorf("The expected ciphered text is %v, when the shift is by %v", "b", 1)
+	}
+}
+
+func TestDecipherText(t *testing.T) {
+	result := NewDecipher(1, "bcd").DecipherText("bcd")
+	if result[0] != "a" || result[1] != "b" || result[2] != "c" {
+		t.Errorf("The expected deciphered text is %v, when the shift is by %v", "a", 1)
 	}
 }

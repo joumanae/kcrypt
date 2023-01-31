@@ -1,47 +1,42 @@
 package ccypher
 
-// func ShiftRune(r rune, shift int) (rune, error) {
+type Cipher struct {
+	Key         int
+	PlainText   string
+	EncodedText string
+}
 
-// 	shift %= 26
+type CipherInterface interface {
+	CipherText(s string) []string
+	DecipherText(s string) []string
+}
 
-//		// lowercase
-//		if shift < 0 || shift > 26 {
-//			log.Fatal("The shift number has to be between 0 and 26")
-//		}
-//		if r >= 'a' && r <= 'z' {
-//			r += rune(shift)
-//		}
-//		if r > 'z' {
-//			r -= 26
-//		}
-//		// uppercase
-//		if r >= 'A' && r <= 'Z' {
-//			r += rune(shift)
-//		}
-//		if r > 'Z' {
-//			r -= 26
-//		}
-//		return r, nil
-//	}
-
-func CipherText(s string) []string {
-	var newS []string
+func (c *Cipher) CipherText(s string) []string {
+	var ciphered []string
 	for _, r := range s {
 		r = ShiftRune(r, 1)
-		newS = append(newS, string(r))
+		ciphered = append(ciphered, string(r))
 	}
-	return newS
+	return ciphered
 }
 
-func ShiftRune(r rune, shift int) rune {
-	return r + rune(shift)
+func ShiftRune(r rune, Shift int) rune {
+	return r + rune(Shift)
 }
 
-func DecipherText(s string) []string {
+func (c *Cipher) DecipherText(s string) []string {
 	var deciphered []string
 	for _, r := range s {
 		r = ShiftRune(r, -1)
 		deciphered = append(deciphered, string(r))
 	}
 	return deciphered
+}
+
+func NewCipher(key int, plainText string) *Cipher {
+	return &Cipher{Key: key, PlainText: plainText}
+}
+
+func NewDecipher(key int, encodedText string) *Cipher {
+	return &Cipher{Key: key, EncodedText: encodedText}
 }

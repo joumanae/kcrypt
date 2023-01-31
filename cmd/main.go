@@ -10,5 +10,6 @@ func main() {
 	var cipherText string
 	flag.StringVar(&cipherText, "ct", "En Attendant Godot", "What needs to be encrypted")
 	flag.Parse()
-	fmt.Println(ccypher.CipherText(cipherText))
+	c := ccypher.Cipher{Key: 1, PlainText: cipherText}
+	fmt.Println(c.CipherText(cipherText))
 }
