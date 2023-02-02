@@ -1,21 +1,23 @@
 package ccypher
 
+import "bytes"
+
 type Cipher struct {
-	Key         int
-	PlainText   string
-	EncodedText string
+	Key int
 }
 
-type CipherInterface interface {
-	CipherText(s string) []string
-	DecipherText(s string) []string
-}
+// type CipherInterface interface {
+// 	CipherText(s string) []string
+// 	DecipherText(s string) []string
+// }
 
-func (c *Cipher) CipherText(s string) []string {
-	var ciphered []string
+func (c *Cipher) Encipher(s string) string {
+	var b bytes.Buffer
+	var ciphered string
 	for _, r := range s {
 		r = ShiftRune(r, 1)
-		ciphered = append(ciphered, string(r))
+		b.WriteRune(r)
+		ciphered = b.String()
 	}
 	return ciphered
 }
@@ -24,19 +26,17 @@ func ShiftRune(r rune, Shift int) rune {
 	return r + rune(Shift)
 }
 
-func (c *Cipher) DecipherText(s string) []string {
-	var deciphered []string
+func (c *Cipher) Decipher(s string) string {
+	var deciphered string
+	var b bytes.Buffer
 	for _, r := range s {
 		r = ShiftRune(r, -1)
-		deciphered = append(deciphered, string(r))
+		b.WriteRune(r)
+		deciphered = b.String()
 	}
 	return deciphered
 }
 
-func NewCipher(key int, plainText string) *Cipher {
-	return &Cipher{Key: key, PlainText: plainText}
-}
-
-func NewDecipher(key int, encodedText string) *Cipher {
-	return &Cipher{Key: key, EncodedText: encodedText}
+func New(key int) *Cipher {
+	return &Cipher{Key: key}
 }

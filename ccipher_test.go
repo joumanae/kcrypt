@@ -1,27 +1,37 @@
-package ccypher
+package ccypher_test
 
 import (
+	"ccypher"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
-func TestShiftRune(t *testing.T) {
-	result := ShiftRune('a', 1)
+func TestShiftRune_GivenAAnd1ReturnB(t *testing.T) {
+	t.Parallel() // This is a new feature in Go 1.7
+	result := ccypher.ShiftRune('a', 1)
 	expected := 'b'
 	if result != expected {
 		t.Errorf("The expected rune is %v, when the shift is by %v", expected, 1)
 	}
 }
 
-func TestCipherText(t *testing.T) {
-	result := NewCipher(1, "abc").CipherText("abc")
-	if result[0] != "b" || result[1] != "c" || result[2] != "d" {
-		t.Errorf("The expected ciphered text is %v, when the shift is by %v", "b", 1)
+func TestEncipherWithKey1TurnsABCIntoBCD(t *testing.T) {
+	t.Parallel()
+	want := "bcd"
+	got := ccypher.New(1).Encipher("abc")
+	if want != got {
+		t.Errorf("want %q, got %q", want, got)
 	}
 }
 
-func TestDecipherText(t *testing.T) {
-	result := NewDecipher(1, "bcd").DecipherText("bcd")
-	if result[0] != "a" || result[1] != "b" || result[2] != "c" {
-		t.Errorf("The expected deciphered text is %v, when the shift is by %v", "a", 1)
+func TestEncipherThenDecipherReproducesOriginalOutput(t *testing.T) {
+	t.Parallel()
+	want := "hello world"
+	c := ccypher.New(1)
+	ciphertext := c.Encipher(want)
+	got := c.Decipher(ciphertext)
+	if !cmp.Equal(want, got) {
+		t.Error(cmp.Diff(want, got))
 	}
 }
