@@ -7,12 +7,13 @@ import (
 )
 
 func main() {
-	var cipherText, decipherText string
-	flag.StringVar(&cipherText, "ct", "En Attendant Godot", "What needs to be encrypted")
-	flag.StringVar(&decipherText, "dt", "Fo Buubmbof Hpepu", "What needs to be decrypted")
+	var cipherText, decipherText bool
+	var message string
+	flag.BoolVar(&cipherText, "ct", false, "What needs to be encrypted")
+	flag.BoolVar(&decipherText, "dt", false, "What needs to be decrypted")
 	flag.Parse()
 	c := ccypher.Cipher{Key: 1}
 	d := ccypher.Cipher{Key: -1}
-	fmt.Println(c.Encipher(cipherText))
-	fmt.Println(d.Decipher(decipherText))
+	fmt.Println(c.Encipher(message))
+	fmt.Println(d.Decipher(message))
 }

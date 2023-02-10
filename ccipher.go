@@ -1,15 +1,14 @@
 package ccypher
 
-import "bytes"
+import (
+	"bytes"
+	"fmt"
+	"unicode"
+)
 
 type Cipher struct {
 	Key int
 }
-
-// type CipherInterface interface {
-// 	CipherText(s string) []string
-// 	DecipherText(s string) []string
-// }
 
 func (c *Cipher) Encipher(s string) string {
 	var b bytes.Buffer
@@ -19,11 +18,18 @@ func (c *Cipher) Encipher(s string) string {
 		b.WriteRune(r)
 		ciphered = b.String()
 	}
-	return ciphered
+	return fmt.Sprintf("Here's the ciphered message : %v", ciphered)
 }
 
 func ShiftRune(r rune, Shift int) rune {
-	return r + rune(Shift)
+	Shift %= 26
+	if unicode.IsLetter(r) {
+		return r + rune(Shift)
+	}
+	if r >= 'z' {
+		return r - 26
+	}
+	return r
 }
 
 func (c *Cipher) Decipher(s string) string {
@@ -34,7 +40,7 @@ func (c *Cipher) Decipher(s string) string {
 		b.WriteRune(r)
 		deciphered = b.String()
 	}
-	return deciphered
+	return fmt.Sprintf("Here's the deciphered message : %v", deciphered)
 }
 
 func New(key int) *Cipher {

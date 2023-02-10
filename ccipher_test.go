@@ -35,3 +35,21 @@ func TestEncipherThenDecipherReproducesOriginalOutput(t *testing.T) {
 		t.Error(cmp.Diff(want, got))
 	}
 }
+
+func TestShiftRune_OnlyShiftsLetters(t *testing.T) {
+	t.Parallel()
+	result := ccypher.ShiftRune('1', 1)
+	expected := '1'
+	if result != expected {
+		t.Errorf("The expected rune is %v, when the shift is by %v", expected, 1)
+	}
+}
+
+func TestShiftRune_ShiftsBackToA(t *testing.T) {
+	t.Parallel()
+	got := ccypher.ShiftRune('z', 1)
+	want := 'a'
+	if got != want {
+		t.Errorf("The expected rune is %c, when the shift is by %v", want, 1)
+	}
+}
