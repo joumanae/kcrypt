@@ -2,7 +2,6 @@ package ccypher
 
 import (
 	"bytes"
-	"fmt"
 	"unicode"
 )
 
@@ -18,18 +17,19 @@ func (c *Cipher) Encipher(s string) string {
 		b.WriteRune(r)
 		ciphered = b.String()
 	}
-	return fmt.Sprintf("Here's the ciphered message : %v", ciphered)
+	return ciphered
 }
 
 func ShiftRune(r rune, Shift int) rune {
-	Shift %= 26
-	if unicode.IsLetter(r) {
-		return r + rune(Shift)
+	if !unicode.IsLetter(r) {
+		return r
+	} else {
+		r = unicode.ToUpper(r)
 	}
-	if r >= 'z' {
-		return r - 26
+	if r+rune(Shift) >= 'Z' {
+		return r + rune(Shift) - 26
 	}
-	return r
+	return r + rune(Shift)
 }
 
 func (c *Cipher) Decipher(s string) string {
@@ -40,7 +40,7 @@ func (c *Cipher) Decipher(s string) string {
 		b.WriteRune(r)
 		deciphered = b.String()
 	}
-	return fmt.Sprintf("Here's the deciphered message : %v", deciphered)
+	return deciphered
 }
 
 func New(key int) *Cipher {

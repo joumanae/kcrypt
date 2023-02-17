@@ -11,7 +11,9 @@ func main() {
 	var message string
 	flag.BoolVar(&cipherText, "ct", false, "What needs to be encrypted")
 	flag.BoolVar(&decipherText, "dt", false, "What needs to be decrypted")
+	flag.StringVar(&message, "m", " ", "This is the message to cipher or decipher")
 	flag.Parse()
+
 	c := ccypher.Cipher{Key: 1}
 	d := ccypher.Cipher{Key: -1}
 	fmt.Println(c.Encipher(message))
