@@ -21,21 +21,19 @@ func (c *Cipher) Encipher(s string) string {
 }
 
 func ShiftRune(r rune, Shift int) rune {
+
 	if !unicode.IsLetter(r) {
 		return r
 	} else {
 		r = unicode.ToUpper(r)
 	}
-	if r+rune(Shift) >= 'Z' && Shift != 13 {
-		return r + rune(Shift) - 26
+	if r >= 'A' && r <= 'Z' {
+		r += rune(Shift)
+		if r > 'Z' {
+			r -= 26
+		}
 	}
-	if r > 'M' && Shift == 13 {
-		return r - 13
-	}
-	if r == 'M' && Shift == 13 {
-		return 'Z'
-	}
-	return r + rune(Shift)
+	return r
 }
 
 func (c *Cipher) Decipher(s string) string {

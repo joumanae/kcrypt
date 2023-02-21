@@ -23,6 +23,9 @@ var RuneTest = []struct {
 	{'Y', 13, 'L'},
 	{'A', 13, 'N'},
 	{'Y', 2, 'A'},
+	{'Z', 14, 'N'},
+	{'Y', 14, 'M'},
+	{'Z', 15, 'O'},
 }
 
 func TestShiftRune(t *testing.T) {
