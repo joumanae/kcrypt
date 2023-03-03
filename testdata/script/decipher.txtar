@@ -1,0 +1,6 @@
+exec encipher -d -k 1 secret.txt
+stdout 'HELLO WORLD'
+! stderr .
+
+-- secret.txt --
+IFMMP XPSME

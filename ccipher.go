@@ -12,17 +12,17 @@ type Cipher struct {
 	Key int
 }
 
-func (c *Cipher) Encipher(s string) string {
-	return Transform(s, c.Key)
+func (c *Cipher) Encipher(message string) string {
+	return Transform(message, c.Key)
 }
 
-func (c *Cipher) Decipher(s string) string {
-	return Transform(s, -c.Key)
+func (c *Cipher) Decipher(message string) string {
+	return Transform(message, -c.Key)
 }
 
-func Transform(s string, key int) string {
+func Transform(message string, key int) string {
 	var b bytes.Buffer
-	for _, r := range s {
+	for _, r := range message {
 		r = ShiftRune(r, key)
 		// fmt.Printf("Enciphered: %d bytes", enc)
 		b.WriteRune(r)
@@ -55,7 +55,7 @@ func New(key int) *Cipher {
 const DefaultKey = 13
 
 func Main() int {
-	// encipher -k 1 message.txt
+	decipherMode := flag.Bool("d", false, "decipher mode")
 	key := flag.Int("k", DefaultKey, "the key to encipher/decipher with")
 	flag.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s -k KEY PATH\nEnciphers a given file with a given key\n", os.Args[0])
@@ -66,11 +66,18 @@ func Main() int {
 		flag.Usage()
 		return 1
 	}
-	data, err := os.ReadFile(flag.Args()[0])
+	message, err := os.ReadFile(flag.Args()[0])
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
-	fmt.Println(New(*key).Encipher(string(data)))
+	cipher := New(*key)
+	var output string
+	if *decipherMode {
+		output = cipher.Decipher(string(message))
+	} else {
+		output = cipher.Encipher(string(message))
+	}
+	fmt.Println(output)
 	return 0
 }
