@@ -1,12 +1,20 @@
 package ccipher_test
 
 import (
+	"os"
 	"testing"
 
 	"ccipher"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/rogpeppe/go-internal/testscript"
 )
+
+func TestMain(m *testing.M) {
+	os.Exit(testscript.RunMain(m, map[string]func() int{
+		"encipher": ccipher.Main,
+	}))
+}
 
 var RuneTest = []struct {
 	r     rune
@@ -59,4 +67,11 @@ func TestEncipherThenDecipherReproducesOriginalOutput(t *testing.T) {
 	if !cmp.Equal(want, got) {
 		t.Error(cmp.Diff(want, got))
 	}
+}
+
+func TestScript(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, testscript.Params{
+		Dir: "testdata/script",
+	})
 }

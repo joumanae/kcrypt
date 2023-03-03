@@ -1,0 +1,8 @@
+# With no key, use a default of 13
+
+exec encipher message.txt
+stdout 'URYYB JBEYQ'
+! stderr .
+
+-- message.txt --
+hello world

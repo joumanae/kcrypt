@@ -1,0 +1,14 @@
+# With no args, print usage message
+! exec encipher
+! stdout .
+stderr '^Usage'
+
+# On read error, print error
+! exec encipher nonexistent.txt
+! stdout .
+stderr 'nonexistent.txt'
+
+# On invalid key, print error
+! exec encipher -k bogus
+! stdout .
+stderr 'bogus'

@@ -1,0 +1,6 @@
+exec encipher -k 1 message.txt
+stdout 'IFMMP XPSME'
+! stderr .
+
+-- message.txt --
+hello world
