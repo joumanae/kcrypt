@@ -1,4 +1,4 @@
-module ccypher
+module ccipher
 
 go 1.18
 

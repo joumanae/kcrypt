@@ -1,32 +1,60 @@
-package ccypher
+package ccipher
 
 import (
+	"bufio"
 	"bytes"
+	"fmt"
+	"os"
 	"unicode"
 )
 
 type Cipher struct {
-	Key int
+	Key      int
+	Encipher bool
+	Decipher bool
+	file     *os.File
 }
 
-func (c *Cipher) Encipher(s string) string {
+func (c *Cipher) EncipherDecipher(s string) string {
 	var b bytes.Buffer
-	var ciphered string
+	var message string
+	c.file, _ = os.Open("message.txt")
+	defer c.file.Close()
 	for _, r := range s {
-		r = ShiftRune(r, c.Key)
-		b.WriteRune(r)
-		ciphered = b.String()
+		if c.Encipher {
+			r = ShiftRune(r, c.Key)
+			b.WriteRune(r)
+			message = b.String()
+			w := bufio.NewWriter(c.file)
+			enc, err := w.WriteString(message)
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Printf("Enciphered: %d bytes", enc)
+		}
+		if c.Decipher {
+			r = ShiftRune(r, -c.Key)
+			b.WriteRune(r)
+			message = b.String()
+			w := bufio.NewWriter(c.file)
+			dec, err := w.WriteString(message)
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Printf("Deciphered: %d bytes", dec)
+		}
 	}
-	return ciphered
+	return message
 }
 
 func ShiftRune(r rune, Shift int) rune {
 
 	if !unicode.IsLetter(r) {
 		return r
-	} else {
-		r = unicode.ToUpper(r)
 	}
+
+	r = unicode.ToUpper(r)
+
 	if r >= 'A' && r <= 'Z' {
 		r += rune(Shift)
 		if r > 'Z' {
@@ -36,17 +64,11 @@ func ShiftRune(r rune, Shift int) rune {
 	return r
 }
 
-func (c *Cipher) Decipher(s string) string {
-	var deciphered string
-	var b bytes.Buffer
-	for _, r := range s {
-		r = ShiftRune(r, -c.Key)
-		b.WriteRune(r)
-		deciphered = b.String()
-	}
-	return deciphered
-}
-
 func New(key int) *Cipher {
-	return &Cipher{Key: key}
+	return &Cipher{
+		Key:      key,
+		Encipher: true,
+		Decipher: true,
+		file:     nil,
+	}
 }
