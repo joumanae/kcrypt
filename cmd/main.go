@@ -1,13 +1,13 @@
 package main
 
 import (
-	"ccipher"
 	"flag"
 	"fmt"
+
+	"ccipher"
 )
 
 func main() {
-
 	cipherText := flag.Bool("ct", false, "What needs to be encrypted")
 	decipherText := flag.Bool("dt", false, "What needs to be decrypted")
 	message := flag.String("m", " ", "This is the message to cipher or decipher")
@@ -16,11 +16,11 @@ func main() {
 
 	if *cipherText {
 		c := ccipher.New(*key)
-		ciphertext := c.EncipherDecipher(*message)
+		ciphertext := c.Encipher(*message)
 		fmt.Println(ciphertext)
 	} else if *decipherText {
 		c := ccipher.New(*key)
-		deciphered := c.EncipherDecipher(*message)
+		deciphered := c.Encipher(*message)
 		fmt.Println(deciphered)
 	} else {
 		fmt.Println("Please enter a message to cipher or decipher")

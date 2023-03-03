@@ -1,54 +1,33 @@
 package ccipher
 
 import (
-	"bufio"
 	"bytes"
-	"fmt"
-	"os"
 	"unicode"
 )
 
 type Cipher struct {
-	Key      int
-	Encipher bool
-	Decipher bool
-	file     *os.File
+	Key int
 }
 
-func (c *Cipher) EncipherDecipher(s string) string {
+func (c *Cipher) Encipher(s string) string {
+	return Transform(s, c.Key)
+}
+
+func (c *Cipher) Decipher(s string) string {
+	return Transform(s, -c.Key)
+}
+
+func Transform(s string, key int) string {
 	var b bytes.Buffer
-	var message string
-	c.file, _ = os.Open("message.txt")
-	defer c.file.Close()
 	for _, r := range s {
-		if c.Encipher {
-			r = ShiftRune(r, c.Key)
-			b.WriteRune(r)
-			message = b.String()
-			w := bufio.NewWriter(c.file)
-			enc, err := w.WriteString(message)
-			if err != nil {
-				fmt.Println(err)
-			}
-			fmt.Printf("Enciphered: %d bytes", enc)
-		}
-		if c.Decipher {
-			r = ShiftRune(r, -c.Key)
-			b.WriteRune(r)
-			message = b.String()
-			w := bufio.NewWriter(c.file)
-			dec, err := w.WriteString(message)
-			if err != nil {
-				fmt.Println(err)
-			}
-			fmt.Printf("Deciphered: %d bytes", dec)
-		}
+		r = ShiftRune(r, key)
+		// fmt.Printf("Enciphered: %d bytes", enc)
+		b.WriteRune(r)
 	}
-	return message
+	return b.String()
 }
 
 func ShiftRune(r rune, Shift int) rune {
-
 	if !unicode.IsLetter(r) {
 		return r
 	}
@@ -66,9 +45,6 @@ func ShiftRune(r rune, Shift int) rune {
 
 func New(key int) *Cipher {
 	return &Cipher{
-		Key:      key,
-		Encipher: true,
-		Decipher: true,
-		file:     nil,
+		Key: key,
 	}
 }

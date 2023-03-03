@@ -1,8 +1,9 @@
 package ccipher_test
 
 import (
-	"ccipher"
 	"testing"
+
+	"ccipher"
 
 	"github.com/google/go-cmp/cmp"
 )
@@ -43,7 +44,7 @@ func TestShiftRune(t *testing.T) {
 func TestEncipherWithKey1TurnsABCIntoBCD(t *testing.T) {
 	t.Parallel()
 	want := "BCD"
-	got := ccipher.New(1).EncipherDecipher("ABC")
+	got := ccipher.New(1).Encipher("ABC")
 	if want != got {
 		t.Errorf("want %q, got %q", want, got)
 	}
@@ -53,8 +54,8 @@ func TestEncipherThenDecipherReproducesOriginalOutput(t *testing.T) {
 	t.Parallel()
 	want := "HELLO WORLD"
 	c := ccipher.New(1)
-	ciphertext := c.EncipherDecipher(want)
-	got := c.EncipherDecipher(ciphertext)
+	ciphertext := c.Encipher(want)
+	got := c.Decipher(ciphertext)
 	if !cmp.Equal(want, got) {
 		t.Error(cmp.Diff(want, got))
 	}
