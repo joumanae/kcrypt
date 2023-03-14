@@ -1,3 +1,9 @@
+# With no args, print usage message
+exec decipherwithoutkey -D decipherwithoutkey.txt
+
+! stderr .
+
+-- decipherwithoutkey.txt --
   _________________________________
 / SNHJ BTWP YTIFD! DTZ'WJ WJFQQD FS \
 \ FBJXTRJ RJRGJW TK LTUMJW XVZFI.   /
