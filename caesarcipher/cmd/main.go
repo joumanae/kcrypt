@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 
-	"ccipher"
+	c "caesarcipher"
 )
 
 func main() {
-	os.Exit(ccipher.Main())
+	os.Exit(c.Main())
 }

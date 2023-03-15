@@ -1,4 +1,4 @@
-package ccipher
+package caesarcipher
 
 import (
 	"bytes"
@@ -59,6 +59,11 @@ func FindKey(mostFrequentLetters []string, message string) int {
 	return key
 }
 
+func (c *Cipher) DecipherWithoutKey(message string) string {
+	key := FindKey([]string{}, message)
+	return Transform(message, -key)
+}
+
 func ShiftRune(r rune, Shift int) rune {
 	if !unicode.IsLetter(r) {
 		return r
@@ -110,8 +115,7 @@ func Main() int {
 		output = cipher.Encipher(string(message))
 	}
 	if *decipherwithoutkey {
-		FrequencyAnalysis(string(message))
-		FindKey([]string{}, string(message))
+		output = cipher.DecipherWithoutKey(string(message))
 	}
 	fmt.Println(output)
 	return 0

@@ -1,0 +1,24 @@
+# With no args, print usage message
+exec decipherwithoutkey -nk messagewithoutkey.txt
+stdout    _________________________________  
+        / NICE =ORK TODA?! ?OU'RE REALL? AN \
+        \ A=ESOME MEMBER OF GOPHER SQUAD.   /
+          ----------------------------------- 
+         \   ^__^
+          \  (OO)\_______
+             (__)\  BIT  )\/\        
+                 ||----= |
+                 ||     ||
+
+! stderr .
+
+-- message.txt --
+  _________________________________
+/ SNHJ BTWP YTIFD! DTZ'WJ WJFQQD FS \
+\ FBJXTRJ RJRGJW TK LTUMJW XVZFI.   /
+  ---------------------------------
+         \   ^__^
+          \  (TT)\_______
+             (__)\  GNY  )\/\
+                 ||----B |
+                 ||     ||

@@ -1,10 +1,10 @@
-package ccipher_test
+package caesarcipher_test
 
 import (
 	"os"
 	"testing"
 
-	"ccipher"
+	c "caesarcipher"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/rogpeppe/go-internal/testscript"
@@ -12,7 +12,7 @@ import (
 
 func TestMain(m *testing.M) {
 	os.Exit(testscript.RunMain(m, map[string]func() int{
-		"encipher": ccipher.Main,
+		"encipher": c.Main,
 	}))
 }
 
@@ -35,13 +35,14 @@ var RuneTest = []struct {
 	{'Z', 14, 'N'},
 	{'Y', 14, 'M'},
 	{'Z', 15, 'O'},
+	{'Y', 5, 'D'},
 }
 
 func TestShiftRune(t *testing.T) {
 	t.Parallel() // This is a new feature in Go 1.7
 
 	for _, tt := range RuneTest {
-		got := ccipher.ShiftRune(tt.r, tt.shift)
+		got := c.ShiftRune(tt.r, tt.shift)
 		want := tt.want
 		if got != want {
 			t.Errorf("With the following input rune %c and shift %d, Expected %c, but got %c", tt.r, tt.shift, want, got)
@@ -52,7 +53,7 @@ func TestShiftRune(t *testing.T) {
 func TestEncipherWithKey1TurnsABCIntoBCD(t *testing.T) {
 	t.Parallel()
 	want := "BCD"
-	got := ccipher.New(1).Encipher("ABC")
+	got := c.New(1).Encipher("ABC")
 	if want != got {
 		t.Errorf("want %q, got %q", want, got)
 	}
@@ -61,7 +62,7 @@ func TestEncipherWithKey1TurnsABCIntoBCD(t *testing.T) {
 func TestEncipherThenDecipherReproducesOriginalOutput(t *testing.T) {
 	t.Parallel()
 	want := "HELLO WORLD"
-	c := ccipher.New(1)
+	c := c.New(1)
 	ciphertext := c.Encipher(want)
 	got := c.Decipher(ciphertext)
 	if !cmp.Equal(want, got) {
