@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
+	"sort"
 	"unicode"
 )
 
@@ -30,23 +30,33 @@ func Transform(message string, key int) string {
 	return b.String()
 }
 
-func FrequencyAnalysis(message string) map[string]int {
-	freq := make(map[string]int)
+func FrequencyAnalysis(message string) (map[rune]int, int) {
+	freq := make(map[rune]int)
 	maxN := 0
-	mostFrequentLetter := ""
 	for _, r := range message {
-		freq[string(r)]++
+		freq[r]++
 	}
 	for n := range freq {
 
-		if freq[n] > maxN && strings.ContainsAny(n, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") {
+		if freq[n] > maxN && unicode.IsLetter(n) {
 			maxN = freq[n]
-			mostFrequentLetter = n
-			// if 2 or more letters have the same frequency, the first one will be chosen
 		}
 	}
-	fmt.Printf("The highest frequency is %v, the letter is %v.\n", maxN, mostFrequentLetter)
-	return freq
+	return freq, maxN
+}
+
+func FindKey(mostFrequentLetters []string, message string) int {
+	freq, maxN := FrequencyAnalysis(message)
+	for n := range freq {
+		if freq[n] == maxN {
+			mostFrequentLetters = append(mostFrequentLetters, string(n))
+		}
+	}
+	sort.Strings(mostFrequentLetters)
+	mostFrequentLetter := mostFrequentLetters[0]
+	key := int(unicode.ToUpper(rune(mostFrequentLetter[0]))) - int('E')
+	fmt.Println("Most frequent letter is", mostFrequentLetter, "and the key is", key)
+	return key
 }
 
 func ShiftRune(r rune, Shift int) rune {
@@ -101,6 +111,7 @@ func Main() int {
 	}
 	if *decipherwithoutkey {
 		FrequencyAnalysis(string(message))
+		FindKey([]string{}, string(message))
 	}
 	fmt.Println(output)
 	return 0
