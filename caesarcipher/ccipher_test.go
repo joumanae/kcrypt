@@ -18,24 +18,23 @@ func TestMain(m *testing.M) {
 
 var RuneTest = []struct {
 	r     rune
-	shift int
+	shift rune
 	want  rune
 }{
-	{'a', 1, 'B'},
-	{'z', 1, 'A'},
-	{'!', 1, '!'},
-	{'1', 1, '1'},
-	{'A', 2, 'C'},
-	{'Z', 1, 'A'},
-	{'M', 13, 'Z'},
-	{'Z', 13, 'M'},
-	{'Y', 13, 'L'},
-	{'A', 13, 'N'},
-	{'Y', 2, 'A'},
-	{'Z', 14, 'N'},
-	{'Y', 14, 'M'},
-	{'Z', 15, 'O'},
-	{'Y', 5, 'D'},
+	{'A', 'B', 'C'},
+	{'z', 'A', 'A'},
+	{'!', 'A', '!'},
+	{'1', 'A', '1'},
+	{'Z', 'A', 'A'},
+	{'M', 'M', 'Z'},
+	{'Z', 'M', 'M'},
+	{'Y', 'M', 'L'},
+	{'A', 'M', 'N'},
+	{'Y', 'B', 'A'},
+	{'Z', 'N', 'N'},
+	{'Y', 'N', 'M'},
+	{'B', -'E', 'W'},
+	{'D', -'E', 'Y'},
 }
 
 func TestShiftRune(t *testing.T) {
@@ -45,7 +44,7 @@ func TestShiftRune(t *testing.T) {
 		got := c.ShiftRune(tt.r, tt.shift)
 		want := tt.want
 		if got != want {
-			t.Errorf("With the following input rune %c and shift %d, Expected %c, but got %c", tt.r, tt.shift, want, got)
+			t.Errorf("With the following input rune %c and shift %c, Expected %c, but got %c", tt.r, tt.shift, want, got)
 		}
 	}
 }
