@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 	"unicode"
 )
 
@@ -17,24 +18,22 @@ func NewVigenere(key string) *Vigenere {
 	return &Vigenere{key}
 }
 
-// Encrypt encrypts a string
-func (v *Vigenere) EncryptMessage(message string) string {
-	var cipher string
-	for i, c := range message {
-		if unicode.IsLetter(c) && unicode.IsUpper(c) && c+rune(v.key[i%len(v.key)]) > 'Z' {
-			fmt.Println(c, rune(v.key[i%len(v.key)]), c+rune(v.key[i%len(v.key)]))
-			cipher += string(c + rune(v.key[i%len(v.key)]) - 26)
-		}
-	}
-	return cipher
+func (v *Vigenere) DecipherLetter(message string) rune {
+	const asciiA rune = 65
+
+	messageIndex := len(message) - len(v.key)
+	asciiLetter := (messageIndex+26)%26 + int(asciiA)
+
+	return rune(asciiLetter)
 }
 
 // Decrypt decrypts a string
 func (v *Vigenere) DecryptMessage(message string) string {
 	var plain string
-	for i, c := range message {
+	newMessage := strings.ToUpper(message)
+	for i, c := range newMessage {
 		if unicode.IsLetter(c) && unicode.IsUpper(c) && c-rune(v.key[i%len(v.key)]) < 'A' {
-			plain += string(c - rune(v.key[i%len(v.key)]))
+			plain += string(v.DecipherLetter(newMessage))
 		}
 	}
 	return plain
@@ -59,8 +58,6 @@ func Main() int {
 	var output string
 	if *decipher {
 		output = cipher.DecryptMessage(string(message))
-	} else {
-		output = cipher.EncryptMessage(string(message))
 	}
 	fmt.Println(output)
 	return 0
