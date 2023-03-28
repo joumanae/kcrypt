@@ -2,63 +2,71 @@ package vigenere
 
 import (
 	"flag"
-	"fmt"
-	"os"
 	"strings"
-	"unicode"
+
+	"fmt"
 )
 
 // key word: vigenere
+
 type Vigenere struct {
-	key string
+	key []byte
 }
 
 // NewVigenere returns a new Vigenere
 func NewVigenere(key string) *Vigenere {
-	return &Vigenere{key}
+	return &Vigenere{[]byte(key)}
 }
 
-func (v *Vigenere) DecipherLetter(message string) rune {
-	const asciiA rune = 65
+func (v *Vigenere) Shift(message []byte) string {
+	k := v.key
+	shift := make([]byte, len(message))
 
-	messageIndex := len(message) - len(v.key)
-	asciiLetter := (messageIndex+26)%26 + int(asciiA)
-
-	return rune(asciiLetter)
-}
-
-// Decrypt decrypts a string
-func (v *Vigenere) DecryptMessage(message string) string {
-	var plain string
-	newMessage := strings.ToUpper(message)
-	for i, c := range newMessage {
-		if unicode.IsLetter(c) && unicode.IsUpper(c) && c-rune(v.key[i%len(v.key)]) < 'A' {
-			plain += string(v.DecipherLetter(newMessage))
-		}
+	// Repeat the key until it is the same length as the message
+	for len(string(k)) < len(string(message)) {
+		fmt.Println(len(string(k)))
+		k = append(k, k...)
 	}
-	return plain
+
+	var plain []byte
+
+	// Shift the message by the key
+	for i := 0; i < len(message); i++ {
+		shift[i] = ((message[i] - k[i]) % 66) + 65
+		plain = append(plain, shift[i])
+
+	}
+
+	plainMessage := strings.ToUpper(string(plain))
+	return plainMessage
 }
 
 func Main() int {
+
 	const DefaultKey = "GO"
 	key := flag.String("key", DefaultKey, "key")
 	decipher := flag.Bool("d", false, "decipher")
+
 	flag.Usage = func() {
 		println("Usage: vigenere [-d] [-key key] string")
 		flag.PrintDefaults()
 	}
-	flag.Parse()
 
-	message, err := os.ReadFile(flag.Args()[0])
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return 1
-	}
+	flag.Parse()
+	// message, err := os.ReadFile(flag.Args()[0])
+	// if err != nil {
+	// fmt.Fprintln(os.Stderr, err)
+	// return 1
+	// }
+
+	message := "NSRZUKUFRR"
 	cipher := NewVigenere(*key)
 	var output string
+
 	if *decipher {
-		output = cipher.DecryptMessage(string(message))
+		output = string(cipher.Shift([]byte(message)))
 	}
+
 	fmt.Println(output)
 	return 0
 }
