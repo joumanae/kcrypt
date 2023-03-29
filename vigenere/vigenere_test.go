@@ -3,16 +3,32 @@ package vigenere_test
 import (
 	"fmt"
 	"testing"
+	"vigenere"
 )
 
 func TestVigenere(t *testing.T) {
 	fmt.Println("TestVigenere")
 }
 
-func TestVigenere_Encrypt(t *testing.T) {
-	fmt.Println("TestVigenere_Encrypt")
+var byteTest = []struct {
+	key     []byte
+	message []byte
+	want    string
+}{
+	{[]byte("GO"), []byte("RSSCT"), "LEMON"},
+	{[]byte("GO"), []byte("NSRZUKUFRR"), "HELLOWORLD"},
+	{[]byte("GO"), []byte("YIYVO"), "SUSHI"},
 }
 
-func TestVigenere_Decrypt(t *testing.T) {
-	fmt.Println("TestVigenere_Decrypt")
+func TestShift(t *testing.T) {
+
+	t.Parallel()
+	for _, tt := range byteTest {
+		//v.Shift
+		got := vigenere.NewVigenere(string(tt.key)).Shift(tt.message)
+		if got != tt.want {
+			t.Errorf("got %q, want %q", got, tt.want)
+
+		}
+	}
 }
