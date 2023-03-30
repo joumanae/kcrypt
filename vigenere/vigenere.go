@@ -2,6 +2,7 @@ package vigenere
 
 import (
 	"flag"
+	"os"
 	"strings"
 
 	"fmt"
@@ -23,8 +24,7 @@ func (v *Vigenere) Shift(message []byte) string {
 	shift := make([]byte, len(message))
 
 	// Repeat the key until it is the same length as the message
-	for len(string(k)) < len(string(message)) {
-		fmt.Println(len(string(k)))
+	for len(string(k)) < len(message) {
 		k = append(k, k...)
 	}
 
@@ -32,6 +32,15 @@ func (v *Vigenere) Shift(message []byte) string {
 
 	// Shift the message by the key
 	for i := 0; i < len(message); i++ {
+
+		// skip non-alphabetic characters and update the key
+		if message[i] < 65 || message[i] > 90 {
+			plain = append(plain, message[i])
+			k = append(k[:i], k[i+1:]...)
+			continue
+		}
+		// the key changes when there is a non-alphabetic character
+
 		shift[i] = ((message[i] - k[i]) % 66) + 65
 		plain = append(plain, shift[i])
 
@@ -53,13 +62,12 @@ func Main() int {
 	}
 
 	flag.Parse()
-	// message, err := os.ReadFile(flag.Args()[0])
-	// if err != nil {
-	// fmt.Fprintln(os.Stderr, err)
-	// return 1
-	// }
+	message, err := os.ReadFile(flag.Args()[0])
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
 
-	message := "NSRZUKUFRR"
 	cipher := NewVigenere(*key)
 	var output string
 

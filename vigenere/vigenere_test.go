@@ -16,7 +16,7 @@ var byteTest = []struct {
 	want    string
 }{
 	{[]byte("GO"), []byte("RSSCT"), "LEMON"},
-	{[]byte("GO"), []byte("NSRZUKUFRR"), "HELLOWORLD"},
+	{[]byte("GO"), []byte("NSRZU KUFRR"), "HELLO WORLD"},
 	{[]byte("GO"), []byte("YIYVO"), "SUSHI"},
 }
 
