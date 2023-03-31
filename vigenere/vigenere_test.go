@@ -23,6 +23,11 @@ var byteTest = []struct {
 		message: []byte("HELLOWORLD"),
 		want:    []byte("IMEQWAZUML"),
 	},
+	{
+		key:     []byte("BITFIELD"),
+		message: []byte("HELLO WORLD"),
+		want:    []byte("IMEQW AZUML"),
+	},
 }
 
 func TestShift(t *testing.T) {

@@ -26,29 +26,26 @@ func (v *Vigenere) Shift(message []byte) []byte {
 	for len(string(k)) < len(message) {
 		k = append(k, k...)
 	}
-
 	var plain []byte
 
 	// Shift the message by the key
 	for i := 0; i < len(message); i++ {
 
 		// skip non-alphabetic characters and update the key
-		// if message[i] < 65 || message[i] > 90 {
-		// 	plain = append(plain, message[i])
-
-		// 	k = append(k[:i], k[i+1:]...)
-		// 	continue
-		// }
+		if message[i] == 32 {
+			shift[i] = message[i]
+			plain = append(plain, shift[i])
+			k = append((k[:i]), k[i-1:]...)
+			continue
+		}
 		// the key changes when there is a non-alphabetic character
-
 		shift[i] = message[i] + (k[i] - 65)
 
-		fmt.Println(message[i], shift[i])
+		fmt.Println(string(message[i]), string(shift[i]))
 		if shift[i] > 90 {
 			shift[i] -= 26
 		}
 		plain = append(plain, shift[i])
-
 	}
 	return plain
 }
