@@ -3,7 +3,6 @@ package vigenere
 import (
 	"flag"
 	"os"
-	"strings"
 
 	"fmt"
 )
@@ -19,7 +18,7 @@ func NewVigenere(key string) *Vigenere {
 	return &Vigenere{[]byte(key)}
 }
 
-func (v *Vigenere) Shift(message []byte) string {
+func (v *Vigenere) Shift(message []byte) []byte {
 	k := v.key
 	shift := make([]byte, len(message))
 
@@ -34,20 +33,24 @@ func (v *Vigenere) Shift(message []byte) string {
 	for i := 0; i < len(message); i++ {
 
 		// skip non-alphabetic characters and update the key
-		if message[i] < 65 || message[i] > 90 {
-			plain = append(plain, message[i])
-			k = append(k[:i], k[i+1:]...)
-			continue
-		}
+		// if message[i] < 65 || message[i] > 90 {
+		// 	plain = append(plain, message[i])
+
+		// 	k = append(k[:i], k[i+1:]...)
+		// 	continue
+		// }
 		// the key changes when there is a non-alphabetic character
 
-		shift[i] = ((message[i] - k[i]) % 66) + 65
+		shift[i] = message[i] + (k[i] - 65)
+
+		fmt.Println(message[i], shift[i])
+		if shift[i] > 90 {
+			shift[i] -= 26
+		}
 		plain = append(plain, shift[i])
 
 	}
-
-	plainMessage := strings.ToUpper(string(plain))
-	return plainMessage
+	return plain
 }
 
 func Main() int {

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 	"vigenere"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestVigenere(t *testing.T) {
@@ -13,11 +15,14 @@ func TestVigenere(t *testing.T) {
 var byteTest = []struct {
 	key     []byte
 	message []byte
-	want    string
+	want    []byte
 }{
-	{[]byte("GO"), []byte("RSSCT"), "LEMON"},
-	{[]byte("GO"), []byte("NSRZU KUFRR"), "HELLO WORLD"},
-	{[]byte("GO"), []byte("YIYVO"), "SUSHI"},
+
+	{
+		key:     []byte("BITFIELD"),
+		message: []byte("HELLOWORLD"),
+		want:    []byte("IMEQWAZUML"),
+	},
 }
 
 func TestShift(t *testing.T) {
@@ -26,9 +31,8 @@ func TestShift(t *testing.T) {
 	for _, tt := range byteTest {
 		//v.Shift
 		got := vigenere.NewVigenere(string(tt.key)).Shift(tt.message)
-		if got != tt.want {
+		if !cmp.Equal(got, tt.want) {
 			t.Errorf("got %q, want %q", got, tt.want)
-
 		}
 	}
 }
