@@ -2,7 +2,10 @@ package diffiehellman
 
 import (
 	"flag"
+	"fmt"
 	"math/big"
+	"math/rand"
+	"time"
 )
 
 var keyExchange struct {
@@ -10,6 +13,13 @@ var keyExchange struct {
 	base    int
 	alice   int
 	bob     int
+}
+
+// generate random secret key
+func GenerateSecretKey() int {
+	rand.Seed(time.Now().Unix())
+	secret := rand.Intn(1000)
+	return secret
 }
 
 func Power(base int, x int) *big.Int {
@@ -20,9 +30,10 @@ func Power(base int, x int) *big.Int {
 	return result
 }
 
+// A=g^a mod p
 func CalculatePublicNumber(base int, secret int, modulus int) *big.Int {
 	p := Power(base, secret)
-	p.Mod(p, big.NewInt(int64(modulus)))
+	p.Mod(p, big.NewInt(int64(modulus))) // p = p % modulus
 	return p
 }
 
@@ -37,20 +48,19 @@ func CalculatePrivateKey(publicNumber *big.Int, secret int, modulus int) *big.In
 func Main() int {
 	// var b bob
 	// var a alice
-	mod := flag.Int("modulus", 0, "modulus") // 0 means use a random prime
-	base := flag.Int("base", 0, "base")      // 0 means use a random base
-	ak := flag.Int("alicekey", 0, "alice key")
-	bk := flag.Int("bobkey", 0, "bob key")
+	mod := flag.Int("mod", 0, "mod")    // 0 means use a random prime
+	base := flag.Int("base", 0, "base") // 0 means use a random base
+
 	flag.Parse()
 
 	keyExchange.modulus = *mod
 	keyExchange.base = *base
-	keyExchange.alice = *ak
-	keyExchange.bob = *bk
+	keyExchange.alice = GenerateSecretKey()
+	keyExchange.bob = GenerateSecretKey()
 	PNumberA := CalculatePublicNumber(keyExchange.base, keyExchange.alice, keyExchange.modulus)
-	CalculatePrivateKey(PNumberA, keyExchange.alice, keyExchange.modulus)
+	fmt.Println(CalculatePrivateKey(PNumberA, keyExchange.alice, keyExchange.modulus))
 	PNumberB := CalculatePublicNumber(keyExchange.base, keyExchange.bob, keyExchange.modulus)
-	CalculatePrivateKey(PNumberB, keyExchange.bob, keyExchange.modulus)
+	fmt.Println(CalculatePrivateKey(PNumberB, keyExchange.bob, keyExchange.modulus))
 
 	return 0
 }
