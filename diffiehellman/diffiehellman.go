@@ -1,16 +1,13 @@
 package diffiehellman
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
 	"math/big"
 	"math/rand"
-	"net"
 	"net/http"
+	"os"
 	"time"
-
-	"github.com/go-errors/errors"
 )
 
 var keyExchange struct {
@@ -50,50 +47,48 @@ func CalculatePublicNumber(base int, secret int, modulus int) *big.Int {
 	return p
 }
 
+func Server() {
+
+	ClientAlice()
+	ClientBob()
+	http.ListenAndServe("localhost:8080", nil)
+}
+
 func ClientAlice() {
-	http.Post("http://localhost:8080", "json", nil)
+	fmt.Println("Alice enters the chat")
+
+	pn := CalculatePublicNumber(keyExchange.base, keyExchange.bob, keyExchange.modulus)
+	http.HandleFunc("/alice", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, " Here's Bob's's public number %s", pn.String())
+	})
 
 }
 
 func ClientBob() {
-	http.Post("http://localhost:8080", "json", nil)
-}
-
-func Server(w http.ResponseWriter, r *http.Request) {
-	// get the public key from the client
-	l, err := net.Listen("tcp", ":8080")
-	if err != nil {
-		errors.Wrap(err, 1)
-	}
-	defer l.Close()
-	for {
-		conn, err := l.Accept()
-		if err != nil {
-			errors.Wrap(err, 1)
-		}
-		go handleConnection(conn)
-
-	}
-
-}
-
-func handleConnection(conn net.Conn) {
-	// handle the connection
-	for {
-		userInput, err := bufio.NewReader(conn).ReadString('\n')
-		if err != nil {
-			errors.Wrap(err, 1)
-		}
-		fmt.Println(userInput)
-	}
+	fmt.Println("Bob enters the chat")
+	pn := CalculatePublicNumber(keyExchange.base, keyExchange.alice, keyExchange.modulus)
+	http.HandleFunc("/bob", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, " Here's Alice's public number %s", pn.String())
+	})
 }
 
 func CalculatePrivateKey(publicNumber *big.Int, secret int, modulus int) *big.Int {
 	b := keyExchange.base
 	pn := CalculatePublicNumber(b, secret, modulus)
 	p := Power(int(pn.Int64()), secret)
-	p.Mod(p, big.NewInt(int64(modulus)))
+	p = p.Mod(p, big.NewInt(int64(modulus)))
+	// write key into file
+	writeKeytoFile(p)
 	return p
+}
+
+func writeKeytoFile(key *big.Int) {
+	file, err := os.OpenFile("key.txt", os.O_APPEND, 0660)
+	if err != nil {
+		fmt.Println("Error opening file")
+	}
+	defer file.Close()
+
 }
 
 func Main() int {
@@ -109,9 +104,10 @@ func Main() int {
 	keyExchange.alice = GenerateSecretKey()
 	keyExchange.bob = GenerateSecretKey()
 	PNumberA := CalculatePublicNumber(keyExchange.base, keyExchange.alice, keyExchange.modulus)
-	fmt.Println(CalculatePrivateKey(PNumberA, keyExchange.alice, keyExchange.modulus))
+	CalculatePrivateKey(PNumberA, keyExchange.alice, keyExchange.modulus)
 	PNumberB := CalculatePublicNumber(keyExchange.base, keyExchange.bob, keyExchange.modulus)
-	fmt.Println(CalculatePrivateKey(PNumberB, keyExchange.bob, keyExchange.modulus))
+	CalculatePrivateKey(PNumberB, keyExchange.bob, keyExchange.modulus)
 
+	Server()
 	return 0
 }

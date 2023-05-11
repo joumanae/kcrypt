@@ -25,13 +25,10 @@ func TestCalculatePrivateKey(t *testing.T) {
 
 	PNA := CalculatePublicNumber(input1[0].base, input1[0].aliceSecretKey, input1[0].modulus)
 	fmt.Println("PNA: ", PNA)
-	a := CalculatePrivateKey(PNA, input1[0].aliceSecretKey, input1[0].modulus)
-	fmt.Println("Alice's private key: ", a)
+	a := (CalculatePrivateKey(PNA, input1[0].aliceSecretKey, input1[0].modulus))
 	PNB := CalculatePublicNumber(input2[0].base, input2[0].bobSecretKey, input2[0].modulus)
-	fmt.Println("PNB: ", PNB)
 	b := CalculatePrivateKey(PNB, input2[0].bobSecretKey, input2[0].modulus)
-	fmt.Println("Bob's private key: ", b)
-	if a != b {
-		t.Errorf("Alice's private key %v != Bob's private key %v", a, b)
+	if a.Cmp(b) != 0 {
+		t.Errorf("Expected %v, got %v", a, b)
 	}
 }
