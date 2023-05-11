@@ -55,8 +55,6 @@ func Server() {
 }
 
 func ClientAlice() {
-	fmt.Println("Alice enters the chat")
-
 	pn := CalculatePublicNumber(keyExchange.base, keyExchange.bob, keyExchange.modulus)
 	http.HandleFunc("/alice", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, " Here's Bob's's public number %s", pn.String())
@@ -65,7 +63,6 @@ func ClientAlice() {
 }
 
 func ClientBob() {
-	fmt.Println("Bob enters the chat")
 	pn := CalculatePublicNumber(keyExchange.base, keyExchange.alice, keyExchange.modulus)
 	http.HandleFunc("/bob", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, " Here's Alice's public number %s", pn.String())
@@ -78,17 +75,8 @@ func CalculatePrivateKey(publicNumber *big.Int, secret int, modulus int) *big.In
 	p := Power(int(pn.Int64()), secret)
 	p = p.Mod(p, big.NewInt(int64(modulus)))
 	// write key into file
-	writeKeytoFile(p)
+
 	return p
-}
-
-func writeKeytoFile(key *big.Int) {
-	file, err := os.OpenFile("key.txt", os.O_APPEND, 0660)
-	if err != nil {
-		fmt.Println("Error opening file")
-	}
-	defer file.Close()
-
 }
 
 func Main() int {
@@ -103,10 +91,33 @@ func Main() int {
 	keyExchange.base = *base
 	keyExchange.alice = GenerateSecretKey()
 	keyExchange.bob = GenerateSecretKey()
-	PNumberA := CalculatePublicNumber(keyExchange.base, keyExchange.alice, keyExchange.modulus)
-	CalculatePrivateKey(PNumberA, keyExchange.alice, keyExchange.modulus)
-	PNumberB := CalculatePublicNumber(keyExchange.base, keyExchange.bob, keyExchange.modulus)
-	CalculatePrivateKey(PNumberB, keyExchange.bob, keyExchange.modulus)
+
+	channel := make(chan int)
+	go func() {
+		fmt.Println("Alice enters the chat")
+		pn := CalculatePublicNumber(keyExchange.base, keyExchange.bob, keyExchange.modulus)
+		CalculatePrivateKey(pn, keyExchange.alice, keyExchange.modulus)
+		_, err := os.Create("alice.txt")
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		os.WriteFile("alice.txt", []byte("Here's alice's private key"+" "+pn.String()), 0644)
+		channel <- 1
+	}()
+	go func() {
+		fmt.Println("Bob enters the chat")
+		pn := CalculatePublicNumber(keyExchange.base, keyExchange.alice, keyExchange.modulus)
+		CalculatePrivateKey(pn, keyExchange.bob, keyExchange.modulus)
+		_, err := os.Create("bob.txt")
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		os.WriteFile("bob.txt", []byte("Here's Bob's private key"+" "+pn.String()), 0644)
+		channel <- 2
+	}()
+	<-channel
 
 	Server()
 	return 0
