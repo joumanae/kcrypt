@@ -25,3 +25,8 @@ Here,'a' represents Alice's secret number, 'b', representd Bob's private number,
 The strength of the scheme comes from the fact that g^ab mod p = g^ba mod p take a long time to compute by any known algorithm
 
 Once Alice and Bob compute the shared secret they can use it as an encryption key, known only to them, for sending messages across the same open communications channel.
+
+**The beauty of big.Int**
+It is always interesting to have to use a package I never used before when writing code. If you take a look at my code you will notice that I am using the math/big package. If you already know about it, you can skip the following paragraph.
+
+When generating a public key, you will need more than 64 bytes. Indeed, it is safer ( yes, it is going overboard, but why not, sometimes). The oackage big allows you to implement arbitrary-precision arithmetic a.k.a big numbers of types Int, Rat, or Float. In this case, I am only interested in using the Int type.
