@@ -1,10 +1,10 @@
-package diffiehellman_test
+package dhkeygen_test // import "github.com/joumanae/cryptographywithgo/dhkeygen"
 
 import (
 	"math/big"
 	"testing"
 
-	diffiehellman "github.com/joumanae/dhkeygen"
+	dhkeygen "github.com/joumanae/cryptographywithgo/dhkeygen"
 )
 
 // func TestSharedKey(t *testing.T) {
@@ -33,7 +33,7 @@ import (
 // }
 
 func TestParseBigInt(t *testing.T) {
-	got, ok := diffiehellman.ParseBigInt("42")
+	got, ok := dhkeygen.ParseBigInt("42")
 	want := big.NewInt(42)
 	if !ok {
 		t.Fatal("problem parsing")

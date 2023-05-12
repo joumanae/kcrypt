@@ -1,4 +1,4 @@
-package diffiehellman
+package dhkeygen
 
 import (
 	"flag"

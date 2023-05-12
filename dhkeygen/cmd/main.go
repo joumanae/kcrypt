@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/joumanae/dhkeygen"
+	dhkeygen "github.com/joumanae/cryptographywithgo/dhkeygen"
 )
 
 func main() {
