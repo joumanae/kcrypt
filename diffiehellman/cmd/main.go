@@ -1,10 +1,11 @@
 package main
 
 import (
-	dh "diffiehellman"
 	"os"
+
+	"github.com/joumanae/diffiehellman"
 )
 
 func main() {
-	os.Exit(dh.Main())
+	os.Exit(diffiehellman.Main())
 }
