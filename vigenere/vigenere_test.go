@@ -15,22 +15,22 @@ var decipherTableTest = []struct {
 
 	{
 		key:     []byte("BITFIELD"),
-		message: []byte("GWSGGSDOKV"),
+		message: []byte("IMEQWAZUML"),
 		want:    []byte("HELLOWORLD"),
 	},
 	{
 		key:     []byte("BITFIELD"),
-		message: []byte("GWSGG SDOKV"),
+		message: []byte("IMEQW AZUML"),
 		want:    []byte("HELLO WORLD"),
 	},
 }
 
-func TestShift(t *testing.T) {
+func TestDecipher(t *testing.T) {
 
 	t.Parallel()
 	for _, tt := range decipherTableTest {
-		//v.Shift
-		got := vigenere.NewVigenere(string(tt.key)).Shift(tt.message)
+
+		got := vigenere.NewVigenere(string(tt.key)).Decipher(tt.message)
 		if !cmp.Equal(got, tt.want) {
 			t.Errorf("got %q, want %q", got, tt.want)
 		}
@@ -45,22 +45,22 @@ var cipherTableTest = []struct {
 	{
 		key:     []byte("BITFIELD"),
 		message: []byte("HELLOWORLD"),
-		want:    []byte("GWSGGSDOKV"),
+		want:    []byte("IMEQWAZUML"),
 	},
 	{
 		key: []byte("BITFIELD"),
 
 		message: []byte("HELLO WORLD"),
-		want:    []byte("GWSGG SDOKV"),
+		want:    []byte("IMEQW AZUML"),
 	},
 }
 
-func TestUnshift(t *testing.T) {
+func TestCipher(t *testing.T) {
 
 	t.Parallel()
 	for _, tt := range cipherTableTest {
 		//v.Shift
-		got := vigenere.NewVigenere(string(tt.key)).Unshift(tt.message)
+		got := vigenere.NewVigenere(string(tt.key)).Cipher(tt.message)
 		if !cmp.Equal(got, tt.want) {
 			t.Errorf("got %q, want %q", got, tt.want)
 		}

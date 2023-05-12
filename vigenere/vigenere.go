@@ -18,7 +18,7 @@ func NewVigenere(key string) *Vigenere {
 	return &Vigenere{[]byte(key)}
 }
 
-func (v *Vigenere) Shift(message []byte) []byte {
+func (v *Vigenere) Cipher(message []byte) []byte {
 	k := v.key
 	shift := make([]byte, len(message))
 
@@ -38,6 +38,15 @@ func (v *Vigenere) Shift(message []byte) []byte {
 			k = append((k[:i]), k[i-1:]...)
 			continue
 		}
+
+		// skip punctuation and update the key
+		if message[i] < 65 || message[i] > 90 {
+			shift[i] = message[i]
+			plain = append(plain, shift[i])
+			k = append((k[:i]), k[i-1:]...)
+			continue
+		}
+
 		// the key changes when there is a non-alphabetic character
 		shift[i] = message[i] + (k[i] - 65)
 
@@ -49,7 +58,7 @@ func (v *Vigenere) Shift(message []byte) []byte {
 	return plain
 }
 
-func (v *Vigenere) Unshift(message []byte) []byte {
+func (v *Vigenere) Decipher(message []byte) []byte {
 	k := v.key
 	shift := make([]byte, len(message))
 
@@ -103,10 +112,10 @@ func Main() int {
 	var output string
 
 	if *decipher {
-		output = string(withKey.Shift([]byte(message)))
+		output = string(withKey.Decipher([]byte(message)))
 	}
 	if *cipher {
-		output = string(withKey.Unshift([]byte(message)))
+		output = string(withKey.Cipher([]byte(message)))
 	}
 
 	fmt.Println(output)
