@@ -7,30 +7,21 @@ import (
 	dhkeygen "github.com/joumanae/cryptographywithgo/dhkeygen"
 )
 
-// func TestSharedKey(t *testing.T) {
+// Add fuzzing to the test
+// go test -v -count=1000 -coverprofile=coverage.out -covermode=atomic
+// -run=TestPublicKey
 
-// 	input1 := []struct {
-// 		modulus        int
-// 		base           int
-// 		aliceSecretKey int
-// 	}{
-// 		{17, 11, 7},
-// 	}
+func FuzzTestPublicKey(f *testing.F) {
+	f.Fuzz(func(t *testing.T, modulus int, base int) {
+		dhkeygen.PublicKey(base, modulus)
+	})
+}
 
-// 	input2 := []struct {
-// 		modulus      int
-// 		base         int
-// 		bobSecretKey int
-// 	}{
-// 		{17, 11, 15},
-// 	}
-
-// 	a := (SharedKey(PNA, input1[0].aliceSecretKey, input1[0].modulus))
-// 	b := SharedKey(PNB, input2[0].bobSecretKey, input2[0].modulus)
-// 	if a.Cmp(b) != 0 {
-// 		t.Errorf("Expected %v, got %v", a, b)
-// 	}
-// }
+func FuzzTestSharedKey(f *testing.F) {
+	f.Fuzz(func(t *testing.T, modulus int, base int, secret int) {
+		dhkeygen.SharedKey(dhkeygen.PublicKey(base, modulus), secret, modulus)
+	})
+}
 
 func TestParseBigInt(t *testing.T) {
 	got, ok := dhkeygen.ParseBigInt("42")
