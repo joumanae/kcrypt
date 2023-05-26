@@ -7,10 +7,6 @@ import (
 	dhkeygen "github.com/joumanae/cryptographywithgo/dhkeygen"
 )
 
-// Add fuzzing to the test
-// go test -v -count=1000 -coverprofile=coverage.out -covermode=atomic
-// -run=TestPublicKey
-
 func FuzzTestPublicKey(f *testing.F) {
 	f.Fuzz(func(t *testing.T, modulus int, base int) {
 		dhkeygen.PublicKey(base, modulus)
@@ -24,8 +20,9 @@ func FuzzTestSharedKey(f *testing.F) {
 }
 
 func TestParseBigInt(t *testing.T) {
-	got, ok := dhkeygen.ParseBigInt("42")
-	want := big.NewInt(42)
+
+	got, ok := dhkeygen.ParseBigInt("52")
+	want := big.NewInt(52)
 	if !ok {
 		t.Fatal("problem parsing")
 	}
