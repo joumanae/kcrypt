@@ -36,3 +36,21 @@ func TestParseBigInt(t *testing.T) {
 		t.Errorf("want %v, got %v", want, got)
 	}
 }
+
+func TestGenerateSecretKey(t *testing.T) {
+	secret1 := dhkeygen.GenerateSecretKey()
+	secret2 := dhkeygen.GenerateSecretKey()
+	pk1, err := dhkeygen.PublicKey(2, 5)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pk2, err := dhkeygen.PublicKey(2, 5)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t1 := dhkeygen.SharedKey(big.NewInt(pk1.Int64()), secret1, 5)
+	t2 := dhkeygen.SharedKey(big.NewInt(pk2.Int64()), secret2, 5)
+	if t1.Cmp(t2) != 0 {
+		t.Errorf("the two users do not have the same shared key: want %v, got %v", t1, t2)
+	}
+}
