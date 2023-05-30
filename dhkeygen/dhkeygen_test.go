@@ -15,7 +15,12 @@ func FuzzTestPublicKey(f *testing.F) {
 
 func FuzzTestSharedKey(f *testing.F) {
 	f.Fuzz(func(t *testing.T, modulus int, base int, secret int) {
-		dhkeygen.SharedKey(dhkeygen.PublicKey(base, modulus), secret, modulus)
+		PK, err := dhkeygen.PublicKey(base, modulus)
+		if err != nil {
+			t.Skip()
+		}
+		dhkeygen.SharedKey(PK, secret, modulus)
+
 	})
 }
 

@@ -1,18 +1,17 @@
 package dhkeygen
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"math/big"
 	"math/rand"
 	"os"
-	"time"
 )
 
 // Generate a random secret key
 func GenerateSecretKey() int {
-	rand.Seed(time.Now().Unix())
-	secret := rand.Intn(1000)
+	secret := rand.Intn(1000) + 1
 	return secret
 }
 
@@ -32,12 +31,15 @@ func ParseBigInt(s string) (*big.Int, bool) {
 }
 
 // Calculate the public key
-func PublicKey(base int, modulus int) *big.Int {
+func PublicKey(base int, modulus int) (*big.Int, error) {
+	if modulus == 0 {
+		return nil, errors.New("the modulus cannot be 0")
+	}
 	secret := GenerateSecretKey()
 	fmt.Printf("Reminder, your generated secret key is %d\n", secret)
 	p := Power(big.NewInt(int64(base)), secret)
 	p.Mod(p, big.NewInt(int64(modulus)))
-	return p
+	return p, nil
 }
 
 // Calculate the shared key
@@ -50,7 +52,7 @@ func SharedKey(publicKey *big.Int, secret int, modulus int) *big.Int {
 
 func Main() int {
 
-	mod := flag.Int("m", 0, "The modulus is a prime number")
+	mod := flag.Int("m", 1, "The modulus is a prime number")
 	base := flag.Int("b", 0, "base")
 	secret := flag.Int("s", 0, "This is a randomly generated secret number")
 	pubKey := flag.String("k", "", "This is the public key")
@@ -59,7 +61,11 @@ func Main() int {
 
 	if len(*pubKey) == 0 {
 
-		pn1 := PublicKey(*base, *mod)
+		pn1, err := PublicKey(*base, *mod)
+		if err != nil {
+			fmt.Println("Modulus cannot be 0")
+			os.Exit(1)
+		}
 		fmt.Printf("This is your public key: %s.", pn1)
 	} else {
 		pk, ok := ParseBigInt(*pubKey)
