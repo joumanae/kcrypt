@@ -9,13 +9,15 @@ import (
 	"os"
 )
 
-var ErrModulusCannotBeZero = errors.New("the modulus cannot be 0")
-var ErrBaseCannotBeZero = errors.New("the base cannot be 0")
+type Secret struct{ key int }
+
+var ErrZeroModulus = errors.New("the modulus cannot be 0")
+var ErrZeroBase = errors.New("the base cannot be 0")
 
 // Generate a random secret key
-func GenerateSecretKey() int {
+func GenerateSecretKey() *Secret {
 	secret := rand.Intn(1000) + 1
-	return secret
+	return &Secret{secret}
 }
 
 // Calculate the power of a number and return a big int
@@ -36,13 +38,13 @@ func ParseBigInt(s string) (*big.Int, bool) {
 // Calculate the public key
 func PublicKey(base int, modulus int) (*big.Int, error) {
 	if modulus == 0 {
-		return nil, ErrModulusCannotBeZero
+		return nil, ErrZeroModulus
 	}
 	if base == 0 {
-		return nil, ErrBaseCannotBeZero
+		return nil, ErrZeroBase
 	}
 
-	secret := GenerateSecretKey()
+	secret := GenerateSecretKey().key
 	fmt.Printf("Reminder, your generated secret key is %d\n", secret)
 	p := Power(big.NewInt(int64(base)), secret)
 	p.Mod(p, big.NewInt(int64(modulus)))
@@ -52,7 +54,7 @@ func PublicKey(base int, modulus int) (*big.Int, error) {
 // Calculate the shared key
 func SharedKey(publicKey *big.Int, secret int, modulus int) (*big.Int, error) {
 	if modulus == 0 {
-		return nil, ErrModulusCannotBeZero
+		return nil, ErrZeroModulus
 	}
 
 	p := Power(publicKey, secret)
@@ -64,7 +66,6 @@ func Main() int {
 
 	mod := flag.Int("m", 1, "The modulus is a prime number")
 	base := flag.Int("b", 1, "base")
-	secret := flag.Int("s", 1, "This is a randomly generated secret number")
 	pubKey := flag.String("k", "", "This is the public key")
 
 	flag.Parse()
@@ -83,7 +84,7 @@ func Main() int {
 			fmt.Println("Your public key is not valid")
 			os.Exit(1)
 		}
-		sk, err := SharedKey(pk, *secret, *mod)
+		sk, err := SharedKey(pk, GenerateSecretKey().key, *mod)
 		if err != nil {
 			fmt.Println("Modulus cannot be 0")
 			os.Exit(1)
