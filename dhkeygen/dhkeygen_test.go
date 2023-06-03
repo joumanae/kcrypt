@@ -13,56 +13,36 @@ func FuzzTestPublicKey(f *testing.F) {
 	})
 }
 
-<<<<<<< HEAD
-// func FuzzTestSharedKey(f *testing.F) {
-// 	f.Fuzz(func(t *testing.T, modulus int, base int, secret int) {
-// 		secret1 := dhkeygen.GenerateSecretKey()
-// 		secret2 := dhkeygen.GenerateSecretKey()
-// 		pk1 := dhkeygen.Power(big.NewInt(int64(base)), secret1)
-// 		pk2 := dhkeygen.Power(big.NewInt(int64(base)), secret2)
-// 		key1, err := dhkeygen.SharedKey(pk2, secret1, modulus)
-// 		if modulus == 0 && base == 00 {
-// 			t.Skip()
-// 		}
-// 		if err != nil {
-// 			t.Fatal(err)
-// 		}
-// 		key2, err := dhkeygen.SharedKey(pk1, secret2, modulus)
-// 		if err != nil {
-// 			t.Fatal(err)
-// 		}
-// 		if key1.Cmp(key2) != 0 {
-// 			t.Errorf("the two users do not have the same shared key: key 1: %v, key 2: %v", key1, key2)
-// 		}
-// 	})
-// }
-=======
 func FuzzTestSharedKey(f *testing.F) {
 	f.Fuzz(func(t *testing.T, modulus int, base int, secret int) {
 
 		pk1, err1 := dhkeygen.PublicKey(base, modulus)
 		if err1 != nil {
-			return
+			t.Error(err1)
 		}
 		pk2, err2 := dhkeygen.PublicKey(base, modulus)
 		if err2 != nil {
-			return
+			t.Error(err2)
 		}
-		secret1 := dhkeygen.GenerateSecretKey()
-		secret2 := dhkeygen.GenerateSecretKey()
-		key1 := dhkeygen.SharedKey(pk2, secret1, modulus)
+
+		key1, err1 := dhkeygen.SharedKey(pk2, dhkeygen.GenerateSecretKey(), modulus)
+		if err1 != nil {
+			t.Errorf("error %v", err1)
+		}
 		if modulus == 0 && base == 00 {
 			t.Skip()
 		}
 
-		key2 := dhkeygen.SharedKey(pk1, secret2, modulus)
+		key2, err2 := dhkeygen.SharedKey(pk1, dhkeygen.GenerateSecretKey(), modulus)
+		if err2 != nil {
+			t.Errorf("error %v", err2)
+		}
 
 		if key1.Cmp(key2) != 0 {
 			t.Errorf("the two users do not have the same shared key: key 1: %v, key 2: %v", key1, key2)
 		}
 	})
 }
->>>>>>> 26a3e16
 
 func TestParseBigInt(t *testing.T) {
 
