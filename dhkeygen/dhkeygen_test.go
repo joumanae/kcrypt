@@ -8,36 +8,34 @@ import (
 )
 
 func FuzzTestPublicKey(f *testing.F) {
-	f.Fuzz(func(t *testing.T, modulus int, base int) {
-		dhkeygen.PublicKey(base, modulus)
+	f.Fuzz(func(t *testing.T, modulus int, base int, secretKey int) {
+		dhkeygen.PublicKey(base, modulus, secretKey)
 	})
 }
 
 func FuzzTestSharedKey(f *testing.F) {
-	f.Fuzz(func(t *testing.T, modulus int, base int, secret int) {
+	f.Fuzz(func(t *testing.T, modulus int, base int, secret int, secret2 int) {
 
-		pk1, err1 := dhkeygen.PublicKey(base, modulus)
-		if err1 != nil {
-			t.Error(err1)
-		}
-		pk2, err2 := dhkeygen.PublicKey(base, modulus)
-		if err2 != nil {
-			t.Error(err2)
-		}
-		s1 := dhkeygen.GenerateSecretKey()
-		s2 := dhkeygen.GenerateSecretKey()
-
-		key1, err1 := dhkeygen.SharedKey(pk2, s1, modulus)
-		if err1 != nil {
-			t.Errorf("error %v", err1)
-		}
-		if modulus == 0 && base == 00 {
+		if modulus == 0 || base == 0 {
 			t.Skip()
 		}
 
-		key2, err2 := dhkeygen.SharedKey(pk1, s2, modulus)
-		if err2 != nil {
-			t.Errorf("error %v", err2)
+		pk1, err := dhkeygen.PublicKey(base, modulus, secret)
+		if err != nil {
+			t.Fatal(err)
+		}
+		pk2, err := dhkeygen.PublicKey(base, modulus, secret2)
+		if err != nil {
+			t.Fatal(err)
+		}
+		key1, err := dhkeygen.SharedKey(pk2, secret, modulus)
+		if err != nil {
+			t.Errorf("error %v", err)
+		}
+
+		key2, err := dhkeygen.SharedKey(pk1, secret2, modulus)
+		if err != nil {
+			t.Errorf("error %v", err)
 		}
 
 		if key1.Cmp(key2) != 0 {
