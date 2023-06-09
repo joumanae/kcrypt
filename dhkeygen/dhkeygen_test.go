@@ -24,8 +24,10 @@ func FuzzTestSharedKey(f *testing.F) {
 		if err2 != nil {
 			t.Error(err2)
 		}
+		s1 := dhkeygen.GenerateSecretKey()
+		s2 := dhkeygen.GenerateSecretKey()
 
-		key1, err1 := dhkeygen.SharedKey(pk2, dhkeygen.GenerateSecretKey(), modulus)
+		key1, err1 := dhkeygen.SharedKey(pk2, s1, modulus)
 		if err1 != nil {
 			t.Errorf("error %v", err1)
 		}
@@ -33,7 +35,7 @@ func FuzzTestSharedKey(f *testing.F) {
 			t.Skip()
 		}
 
-		key2, err2 := dhkeygen.SharedKey(pk1, dhkeygen.GenerateSecretKey(), modulus)
+		key2, err2 := dhkeygen.SharedKey(pk1, s2, modulus)
 		if err2 != nil {
 			t.Errorf("error %v", err2)
 		}
