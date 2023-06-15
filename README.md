@@ -1,13 +1,12 @@
-# Caesar Cipher
+# Goal
 
-## What
+Learning about ciphers and getting better at writing code in Go. 
 
-Caesar cipher takes each letter from a string and shifts it by a given integer
+# Why 
 
-## Why
+Because I would like to get better at both. 
 
-To learn how to write a simple cipher package using Go
+# Disclaimer for the randos of the Internet
 
-## How
-
-This cipher is a CLI tool, the user can determine if they wish to encipher or decipher a message. It also determines by how many letters they would like to shift
+I am choosing to make this repo public. Feedback is much appreciated, but not condescension. 
+شكرا/Merci/Thank you/ⵛⵓⴽⵕⴰⵏ 
