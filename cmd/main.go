@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 
-	dhkeygen "github.com/joumanae/cryptographywithgo/dhkeygen"
+	"github.com/joumanae/kcrypt"
 )
 
 func main() {
-	os.Exit(dhkeygen.Main())
+	os.Exit(kcrypt.Main())
 }

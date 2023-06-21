@@ -4,12 +4,12 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/joumanae/cryptographywithgo/dhkeygen"
+	"github.com/joumanae/kcrypt"
 )
 
 func FuzzTestPublicKey(f *testing.F) {
 	f.Fuzz(func(t *testing.T, modulus int, base int, secretKey int) {
-		dhkeygen.PublicKey(base, modulus, secretKey)
+		kcrypt.PublicKey(base, modulus, secretKey)
 	})
 }
 
@@ -20,20 +20,20 @@ func FuzzTestSharedKey(f *testing.F) {
 			t.Skip()
 		}
 
-		pk1, err := dhkeygen.PublicKey(base, modulus, secret)
+		pk1, err := kcrypt.PublicKey(base, modulus, secret)
 		if err != nil {
 			t.Fatal(err)
 		}
-		pk2, err := dhkeygen.PublicKey(base, modulus, secret2)
+		pk2, err := kcrypt.PublicKey(base, modulus, secret2)
 		if err != nil {
 			t.Fatal(err)
 		}
-		key1, err := dhkeygen.SharedKey(pk2, secret, modulus)
+		key1, err := kcrypt.SharedKey(pk2, secret, modulus)
 		if err != nil {
 			t.Errorf("error %v", err)
 		}
 
-		key2, err := dhkeygen.SharedKey(pk1, secret2, modulus)
+		key2, err := kcrypt.SharedKey(pk1, secret2, modulus)
 		if err != nil {
 			t.Errorf("error %v", err)
 		}
@@ -46,7 +46,7 @@ func FuzzTestSharedKey(f *testing.F) {
 
 func TestParseBigInt(t *testing.T) {
 
-	got, ok := dhkeygen.ParseBigInt("52")
+	got, ok := kcrypt.ParseBigInt("52")
 	want := big.NewInt(52)
 	if !ok {
 		t.Fatal("problem parsing")
