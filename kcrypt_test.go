@@ -1,10 +1,10 @@
-package dhkeygen_test // import "github.com/joumanae/cryptographywithgo/dhkeygen"
+package kcrypt_test
 
 import (
 	"math/big"
 	"testing"
 
-	dhkeygen "github.com/joumanae/cryptographywithgo/dhkeygen"
+	"github.com/joumanae/cryptographywithgo/dhkeygen"
 )
 
 func FuzzTestPublicKey(f *testing.F) {
