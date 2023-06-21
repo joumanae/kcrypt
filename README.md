@@ -1,4 +1,16 @@
-# Understanding the Diffie Hillman key exchange
+# Kaleodoscopic Cryptography
+
+## Description 
+
+This project contains various cryptographic methods. It starts with the ones that are straight forward and the ones that are a little more complex. This project is meant to be full of colors and nuances, thus the reference to a kaleodoscope.
+
+## Substitute Ciphers 
+
+The first cipher I ever wrote was the caesar cipher. It takes a single character key (a letter), and uses it to substitute each character in the ciphered text by another one. 
+
+The 2nd cipher is the vigenere cipher. It is a little more sophisticated. It takes a multi-character key and uses it to cipher or decipher a message. 
+
+## Understanding the Diffie Hillman key exchange
 
 **Why learn about the Diffie Hillman Key exchange:**
 
