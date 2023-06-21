@@ -7,8 +7,7 @@ import (
 	"math/big"
 	"math/rand"
 	"os"
-	"sort"
-	"unicode"
+	"strings"
 )
 
 // key word: vigenere
@@ -23,8 +22,9 @@ func NewSubstitutionCipher(key string) *Substitute {
 
 func (v *Substitute) Cipher(message []byte) []byte {
 	k := v.key
+	fmt.Println("key", k, "message", message)
 	shift := make([]byte, len(message))
-
+	message = []byte(strings.ToUpper(string(message)))
 	// Repeat the key until it is the same length as the message
 	for len(string(k)) < len(message) {
 		k = append(k, k...)
@@ -92,37 +92,6 @@ func (v *Substitute) Decipher(message []byte) []byte {
 	return plain
 }
 
-func FindKey(mostFrequentLetters []string, message string) int {
-	fmt.Println("finding the key")
-	freq, maxN := FrequencyAnalysis(message)
-	for n := range freq {
-		if freq[n] == maxN {
-			mostFrequentLetters = append(mostFrequentLetters, string(n))
-		}
-	}
-	sort.Strings(mostFrequentLetters)
-	mostFrequentLetter := mostFrequentLetters[0]
-	key := int(unicode.ToUpper(rune(mostFrequentLetter[0]))) - int('E')
-	fmt.Println("Most frequent letter is", mostFrequentLetter, "and the key is", key)
-	return key
-}
-
-func FrequencyAnalysis(message string) (map[rune]int, int) {
-	fmt.Println("Running the frequency analysis")
-	freq := make(map[rune]int)
-	maxN := 0
-	for _, r := range message {
-		freq[r]++
-	}
-	for n := range freq {
-
-		if freq[n] > maxN && unicode.IsLetter(n) {
-			maxN = freq[n]
-		}
-	}
-	return freq, maxN
-}
-
 var ErrZeroModulus = errors.New("the modulus cannot be 0")
 var ErrZeroBase = errors.New("the base cannot be 0")
 
@@ -175,6 +144,8 @@ func SharedKey(publicKey *big.Int, secret int, modulus int) (*big.Int, error) {
 func Main() int {
 
 	const DefaultKey = "GO"
+	scipher := flag.Bool("scipher", false, "Runs the substitute cipher code if true")
+	dhkeygen := flag.Bool("dhkeygen", false, "Runs the Diffie Hillman key exchange")
 	key := flag.String("key", DefaultKey, "key")
 	decipher := flag.Bool("d", false, "decipher")
 	cipher := flag.Bool("c", false, "cipher")
@@ -190,45 +161,51 @@ func Main() int {
 	}
 
 	flag.Parse()
-	message, err := os.ReadFile(flag.Args()[0])
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return 1
-	}
 
-	withKey := NewSubstitutionCipher(*key)
-	var output string
-
-	if *decipher {
-		output = string(withKey.Decipher([]byte(message)))
-	}
-	if *cipher {
-		output = string(withKey.Cipher([]byte(message)))
-	}
-
-	fmt.Println(output)
-
-	if len(*pubKey) == 0 {
-
-		pn1, err := PublicKey(*base, *mod, secretKey)
+	if *scipher {
+		message, err := os.ReadFile(flag.Args()[0])
 		if err != nil {
-			fmt.Println("Modulus cannot be 0")
-			os.Exit(1)
-		}
-		fmt.Printf("This is your public key: %s, & this is your secret key %v.", pn1, secretKey)
-	} else {
-		pk, ok := ParseBigInt(*pubKey)
-		if !ok {
-			fmt.Println("Your public key is not valid")
-			os.Exit(1)
+			fmt.Fprintln(os.Stderr, err)
+			return 1
 		}
 
-		sk, err := SharedKey(pk, *secret, *mod)
-		if err != nil {
-			fmt.Println("Modulus cannot be 0")
-			os.Exit(1)
+		withKey := NewSubstitutionCipher(*key)
+		var output string
+
+		if *decipher {
+			output = string(withKey.Decipher([]byte(message)))
 		}
-		fmt.Printf("This is your shared key %s", sk)
+		if *cipher {
+			output = string(withKey.Cipher([]byte(message)))
+		}
+
+		fmt.Println(output)
+
 	}
+	if *dhkeygen {
+		if len(*pubKey) == 0 {
+
+			pn1, err := PublicKey(*base, *mod, secretKey)
+			if err != nil {
+				fmt.Println("Modulus cannot be 0")
+				os.Exit(1)
+			}
+			fmt.Printf("This is your public key: %s, & this is your secret key %v.", pn1, secretKey)
+		} else {
+			pk, ok := ParseBigInt(*pubKey)
+			if !ok {
+				fmt.Println("Your public key is not valid")
+				os.Exit(1)
+			}
+
+			sk, err := SharedKey(pk, *secret, *mod)
+			if err != nil {
+				fmt.Println("Modulus cannot be 0")
+				os.Exit(1)
+			}
+			fmt.Printf("This is your shared key %s", sk)
+		}
+	}
+
 	return 0
 }
